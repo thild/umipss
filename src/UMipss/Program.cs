@@ -13,20 +13,25 @@ namespace UMipss
 	{
 		public static void Main (string[] args)
 		{
+            CP0.SetRegister (Cp0Reg.Cause, 10);
+            Console.WriteLine (CP0.GetRegister (Cp0Reg.Cause));
+            CP0.SetRegister (10, 20);
+            Console.WriteLine (CP0.GetRegister (10));
 			Console.WriteLine ("Hello World!");
-			CPU.SetRegister ("$t1", 10);
-			CPU.SetRegister ("$t2", 20);
-//			ALU.RInstructions.Add (
-//				new R { 
-//					OpCode = 0,
-//					Rd = 8,
-//					Rs = 9,
-//					Rt = 10,
-//					Funct = 31,
-//					//Operation = (a, b) => a + b
-//				});
-			//ALU.RInstructions [0].Exec ();
-			Console.WriteLine (CPU.GetRegister ("$t0"));
+            CPU.SetRegister (CpuReg.t1, 10);
+            CPU.SetRegister (CpuReg.t2, 20);
+////			ALU.RInstructions.Add (
+////				new R { 
+////					OpCode = 0,
+////					Rd = 8,
+////					Rs = 9,
+////					Rt = 10,
+////					Funct = 31,
+////					//Operation = (a, b) => a + b
+////				});
+            /// 
+            ALU.Exec(new R(0, CpuReg.t1, CpuReg.t2, CpuReg.t0, 0, 0x20));
+            Console.WriteLine (CPU.GetRegister (CpuReg.t0));
 			Console.ReadLine ();
 		}
 	}

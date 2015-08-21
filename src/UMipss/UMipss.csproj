@@ -44,8 +44,10 @@
     <Compile Include="J.cs" />
     <Compile Include="Assembler.cs" />
     <Compile Include="InstructionType.cs" />
-    <Compile Include="Coprocessor0.cs" />
-    <Compile Include="RegisterFileType.cs" />
+    <Compile Include="CP0.cs" />
+    <Compile Include="Cp0Reg.cs" />
+    <Compile Include="CpuReg.cs" />
+    <Compile Include="InstructionMetadata.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

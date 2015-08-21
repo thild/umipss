@@ -5,25 +5,47 @@ using System.Text.RegularExpressions;
 namespace UMipss
 {
 
+    public struct InstructionMetadata
+    {
+        public InstructionMetadata (Instruction instruction, 
+                                    int opcode, int function, InstructionFormat format)
+        {
+            Instruction = instruction;
+            Format = format;
+            OpCode = opcode;
+            Function = function;
+        }
 
-	public enum InstructionFormat
-	{
-		R,I,J
-	}
+        public string Mnemonic { 
+            get { 
+                return Enum.GetName (Instruction.GetType (), Instruction);
+            }
+        }
 
+        public Instruction Instruction { get; set; }
+
+        public InstructionFormat Format { get; set; }
+
+        public int OpCode { get; set; }
+
+        public int Function { get; set; }
+    }
+
+
+    
 	
 }
 
 /*
- * https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
+https://en.wikibooks.org/wiki/MIPS_Assembly/Instruction_Formats
 Mnemonic 	Meaning 									Type 	Opcode 	Funct
 add 		Add 										R 		0x00 	0x20
 addi 		Add Immediate 								I 		0x08 	NA
 addiu 		Add Unsigned Immediate 						I 		0x09 	NA
 addu 		Add Unsigned 								R 		0x00 	0x21
 and 		Bitwise AND 								R 		0x00 	0x24	
-//andi 		Bitwise AND Immediate 						I 		0x0C 	NA
-//beq 		Branch if Equal 							I 		0x04 	NA
+andi 		Bitwise AND Immediate 						I 		0x0C 	NA
+beq 		Branch if Equal 							I 		0x04 	NA
 bne 		Branch if Not Equal 						I 		0x05 	NA
 div 		Divide 										R 		0x00 	0x1A
 divu 		Unsigned Divide 							R 		0x00 	0x1B

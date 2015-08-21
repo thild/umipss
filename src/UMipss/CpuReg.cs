@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace UMipss
 {
-	public enum RegisterFileType
+	public enum CpuReg
 	{
 		zero = 0,
 		at = 1,

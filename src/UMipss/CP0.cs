@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 //http://www.eecg.toronto.edu/~yuan/teaching/ece344/mips.html
@@ -7,40 +8,8 @@ using System.Text.RegularExpressions;
 namespace UMipss
 {
 
-	public enum Cp0RegisterType
-	{
-		Index = 0,
-		Random = 1,
-		EntryLo0 = 2,
-		EntryLo1 = 3,
-		Context = 4,
-		PageMask = 5,
-		Wired = 6,
-		HWREna = 7,
-		BadVAddr = 8,
-		Count = 9,
-		EntryHi = 10,
-		Compare = 11,
-		Status = 12,
-		Cause = 13,
-		EPC = 14,
-		PRId = 15,
-		Config = 16,
-		LLAddr = 17,
-		WatchLo = 18,
-		WatchHi = 19,
-		Debug = 23,
-		DEPC = 24,
-		PerfCnt = 25,
-		ErrCtl = 26,
-		CacheErr = 27,
-		TagLo = 28,
-		TagHi = 29,
-		ErrorEPC = 30,
-		DESAVE = 31
-	}
 
-	public class Coprocessor0
+    public static class CP0
 	{
 
 		/// <summary>
@@ -48,7 +17,6 @@ namespace UMipss
 		/// http://en.wikichip.org/wiki/Coprocessor_0_-_MIPS
 		/// https://books.google.com.br/books?id=-DG18Nf7jLcC&pg=PA344&lpg=PA344&dq=mips+%22coprocessor+0%22+cause&source=bl&ots=QgsJpEnFLP&sig=2GNpSTWsgcHT_zRxT8s8U0gawok&hl=pt-BR&sa=X&ved=0CEoQ6AEwBjgKahUKEwiAys_vgrbHAhXLhpAKHdlNB3A#v=onepage&q=mips%20%22coprocessor%200%22%20cause&f=false
 		/// </summary>
-		static int[] cp0regs = new int[32];
 
 		public static int Index { get; set; }
 
@@ -107,6 +75,33 @@ namespace UMipss
 		public static int ErrorEPC { get; set; }
 
 		public static int DESAVE { get; set; }
-			
+		
+        public static int GetRegister(int r)
+        {
+            return GetRegister ((Cp0Reg)r);
+        }
+
+        public static void SetRegister(int r, int value)
+        {
+            SetRegister ((Cp0Reg)r, value);
+        }
+
+        public static int GetRegister(Cp0Reg r)
+        {
+            var propertyInfo = GetPropertyInfo (r); 
+            return (int) propertyInfo.GetValue(null, null);
+        }
+
+        public static void SetRegister(Cp0Reg r, int value)
+        {
+            var propertyInfo = GetPropertyInfo (r); 
+            propertyInfo.SetValue(null, value);
+        }
+
+        static PropertyInfo GetPropertyInfo (Cp0Reg r)
+        {
+            var propertyInfo = typeof(CP0).GetProperty (r.ToString (), BindingFlags.Public | BindingFlags.Static);
+            return propertyInfo;
+        }
 	}
 }

@@ -11,9 +11,9 @@ namespace UMipss
 
 		public int OpCode { get; set; }
 
-		public int Rs { get; set; }
+        public CpuReg Rs { get; set; }
 
-		public int Rt { get; set; }
+        public CpuReg Rt { get; set; }
 
 		public int Immediate { get; set; }
 	}
