@@ -13,8 +13,8 @@ namespace UMipss
 	{
 		public static void Main (string[] args)
 		{
-			CPU.Memory [40] = 10;
-			CPU.Memory [44] = 20;
+			CPU.DataMemory [40] = 10;
+			CPU.DataMemory [44] = 20;
 			Clock.Frequency = 1000;
 			Clock.Start ();
 			Pipeline.Start ();

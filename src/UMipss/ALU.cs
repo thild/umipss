@@ -63,7 +63,7 @@ namespace UMipss
 			instructionsI = new Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, int>> { { 
 					InstructionMnemonic.lw, 
 					(rs, rt, immediate) => {
-						var mem = CPU.Memory[CPU.GetRegister (rs) + immediate * 4];
+						var mem = CPU.DataMemory[CPU.GetRegister (rs) + immediate * 4];
 						CPU.SetRegister (rt, mem);
 					}
 				},
