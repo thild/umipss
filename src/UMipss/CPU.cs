@@ -10,7 +10,8 @@ namespace UMipss
 
     public static class CPU
     {
-		public static int[] Memory = new int[100000];
+        public static int[] DataMemory = new int[100000];
+		public static int[] InstructionMemory = new int[100000];
 
         /// <summary>
         /// Gets or sets the P.
