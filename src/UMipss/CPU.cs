@@ -10,6 +10,8 @@ namespace UMipss
 
     public static class CPU
     {
+		public static int[] Memory = new int[100000];
+
         /// <summary>
         /// Gets or sets the P.
         /// Program counter.

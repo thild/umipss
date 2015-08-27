@@ -7,107 +7,108 @@ using System.Linq;
 namespace UMipss
 {
 
-    public static class ALU
-    {
-        static Dictionary<Instruction, Action<CpuReg, CpuReg, CpuReg, int>> instructionsR;
-        static Dictionary<Tuple<int, int>, Action<int, int, int>> instructionsI;
-        static Dictionary<Tuple<int, int>, Action<int, int>> instructionsJ;
+	public static class ALU
+	{
+		static Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, CpuReg, int>> instructionsR;
+		static Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, int>> instructionsI;
+		static Dictionary<InstructionMnemonic, Action<int>> instructionsJ;
 
-        static ALU ()
-        {
-            instructionsR = new Dictionary<Instruction, Action<CpuReg, CpuReg, CpuReg, int>> { 
-                { Instruction.add, 
-                    (rd, rs, rt, shamt) => {
-                        try {
-                            CPU.SetRegister (rd, checked(CPU.GetRegister (rs) + CPU.GetRegister (rt))); 
-                            CP0.Cause ^= 0x800;
-                        } catch (OverflowException) {
-                            CP0.Cause |= 0x800;
-                        }
-                    }
+		static ALU ()
+		{
+			instructionsR = new Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, CpuReg, int>> { { InstructionMnemonic.add, 
+					(rd, rs, rt, shamt) => {
+						try {
+							CPU.SetRegister (rd, checked(CPU.GetRegister (rs) + CPU.GetRegister (rt))); 
+							CP0.Cause ^= 0x800;
+						} catch (OverflowException) {
+							CP0.Cause |= 0x800;
+						}
+					}
 
-                }, { Instruction.addu, 
-                    (rd, rs, rt, shamt) => {
-                        uint rsu = (uint)CPU.GetRegister (rs);
-                        uint rtu = (uint)CPU.GetRegister (rt);
-                        uint rdu = rsu + rtu;
-                        CPU.SetRegister (rd, (int)rdu);
-                    }
+				}, { InstructionMnemonic.addu, 
+					(rd, rs, rt, shamt) => {
+						uint rsu = (uint)CPU.GetRegister (rs);
+						uint rtu = (uint)CPU.GetRegister (rt);
+						uint rdu = rsu + rtu;
+						CPU.SetRegister (rd, (int)rdu);
+					}
 
-                }, { Instruction.and, 
-                    (rd, rs, rt, shamt) => CPU.SetRegister (rd, CPU.GetRegister (rs) & CPU.GetRegister (rt))
+				}, { InstructionMnemonic.and, 
+					(rd, rs, rt, shamt) => CPU.SetRegister (rd, CPU.GetRegister (rs) & CPU.GetRegister (rt))
 						
-                }, { Instruction.div, 
-                    (rd, rs, rt, shamt) => {
-                        CPU.LO = CPU.GetRegister (rs) / CPU.GetRegister (rt); 
-                        CPU.HI = CPU.GetRegister (rs) % CPU.GetRegister (rt); 
-                    }
+				}, { InstructionMnemonic.div, 
+					(rd, rs, rt, shamt) => {
+						CPU.LO = CPU.GetRegister (rs) / CPU.GetRegister (rt); 
+						CPU.HI = CPU.GetRegister (rs) % CPU.GetRegister (rt); 
+					}
 
-                }, { Instruction.divu, 
-                    (rd, rs, rt, shamt) => {
-                        CPU.LO = CPU.GetRegister (rs) / CPU.GetRegister (rt); 
-                        CPU.HI = CPU.GetRegister (rs) % CPU.GetRegister (rt); 
-                    }
+				}, { InstructionMnemonic.divu, 
+					(rd, rs, rt, shamt) => {
+						CPU.LO = CPU.GetRegister (rs) / CPU.GetRegister (rt); 
+						CPU.HI = CPU.GetRegister (rs) % CPU.GetRegister (rt); 
+					}
 
-                }, { Instruction.jr, 
-                    (rd, rs, rt, shamt) => CPU.PC = CPU.GetRegister (rs)
+				}, { InstructionMnemonic.jr, 
+					(rd, rs, rt, shamt) => CPU.PC = CPU.GetRegister (rs)
 						
-                }, { Instruction.mfhi, 
-                    (rd, rs, rt, shamt) => CPU.SetRegister (rd, CPU.HI)
+				}, { InstructionMnemonic.mfhi, 
+					(rd, rs, rt, shamt) => CPU.SetRegister (rd, CPU.HI)
 						
-                }, { Instruction.mflo, 
-                    (rd, rs, rt, shamt) => CPU.SetRegister (rd, CPU.LO)
-                },
-            };
-            /*
-add 
-addu 
-and 
-div 
-divu 
-jr 
-mfhi 
-mflo 
-mfc0 
-mult 
-multu 
-nor 
-xor 
-or 
-slt 
-sltu 
-sll 
-srl 
-sra 
-sub 
-subu 
+				}, { InstructionMnemonic.mflo, 
+					(rd, rs, rt, shamt) => CPU.SetRegister (rd, CPU.LO)
+				}, 
 
-			 */
-        }
+			};
 
-        public static Dictionary<Instruction, Action<CpuReg, CpuReg, CpuReg, int>> InstructionsR {
-            get {
-                return instructionsR;
-            }
-        }
+			instructionsI = new Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, int>> { { 
+					InstructionMnemonic.lw, 
+					(rs, rt, immediate) => {
+						var mem = CPU.Memory[CPU.GetRegister (rs) + immediate * 4];
+						CPU.SetRegister (rt, mem);
+					}
+				},
+				{ 
+					InstructionMnemonic.ori, 
+					(rs, rt, immediate) => {
+						CPU.SetRegister (rt, CPU.GetRegister (rs) | immediate);
+					}
+				},
+			};
+		}
 
-        public static Dictionary<Tuple<int, int>, Action<int, int, int>> InstructionsI {
-            get {
-                return instructionsI;
-            }
-        }
+		//        public static Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, CpuReg, int>> InstructionsR {
+		//            get {
+		//                return instructionsR;
+		//            }
+		//        }
+		//
+		//		public static Dictionary<InstructionMnemonic, Action<CpuReg, CpuReg, int>> InstructionsI {
+		//            get {
+		//                return instructionsI;
+		//            }
+		//        }
+		//
+		//		public static Dictionary<InstructionMnemonic, Action< int>> InstructionsJ {
+		//            get {
+		//                return instructionsJ;
+		//            }
+		//        }
 
-        public static Dictionary<Tuple<int, int>, Action<int, int>> InstructionsJ {
-            get {
-                return instructionsJ;
-            }
-        }
+		public static void Exec (InstructionR i)
+		{
+			instructionsR [i.Instruction] (i.Rd, i.Rs, i.Rt, i.Shamt);
+		}
 
-        public static void Exec (R i)
-        {
-            //instructionsR [im] (i.Rd, i.Rs, i.Rt, i.Shamt);
-        }
+		public static void Exec (InstructionI i)
+		{
+			instructionsI [i.Instruction] (i.Rs, i.Rt, i.Immediate);
+		}
 
-    }
+		public static void Exec (InstructionJ i)
+		{
+			instructionsJ [i.Instruction] (i.Address);
+		}
+
+	}
 	
 }

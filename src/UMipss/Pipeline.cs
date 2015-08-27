@@ -1,12 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace UMipss
 {
 
 	public static class Pipeline
 	{
+		static	Pipeline() {
+			Clock.Tick += (sender, e) => {
+			};
+		}
+
+		public static void Start() {
+			
+		}
+
 		public static IInstruction If ()
 		{
 			throw new NotImplementedException ();

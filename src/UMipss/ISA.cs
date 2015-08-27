@@ -1,96 +1,55 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Reflection;
 
 namespace UMipss
 {
 
-    public enum Instruction
-    {
-        add,
-        addi,
-        addiu,
-        addu,
-        and,
-        andi,
-        beq,
-        bne,
-        div,
-        divu,
-        j,
-        jal,
-        jr,
-        lbu,
-        lhu,
-        lui,
-        lw,
-        mfhi,
-        mflo,
-        mfc0,
-        mult,
-        multu,
-        nor,
-        xor,
-        or,
-        ori,
-        sb,
-        sh,
-        slt,
-        slti,
-        sltiu,
-        sltu,
-        sll,
-        srl,
-        sra,
-        sub,
-        subu,
-        sw
-    }
 
     /// <summary>
     /// IS.
     /// </summary>
     public static class ISA
     {
-
-        private static InstructionMetadata _add = new InstructionMetadata (Instruction.add, 0x00, 0x20, InstructionFormat.R);
-        private static InstructionMetadata _addi = new InstructionMetadata (Instruction.addi, 0x08, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _addiu = new InstructionMetadata (Instruction.addiu, 0x09, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _addu = new InstructionMetadata (Instruction.addu, 0x00, 0x21, InstructionFormat.R);
-        private static InstructionMetadata _and = new InstructionMetadata (Instruction.and, 0x00, 0x24, InstructionFormat.R);
-        private static InstructionMetadata _andi = new InstructionMetadata (Instruction.andi, 0x0C, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _beq = new InstructionMetadata (Instruction.beq, 0x04, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _bne = new InstructionMetadata (Instruction.bne, 0x05, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _div = new InstructionMetadata (Instruction.div, 0x00, 0x1A, InstructionFormat.R);
-        private static InstructionMetadata _divu = new InstructionMetadata (Instruction.divu, 0x00, 0x1B, InstructionFormat.R);
-        private static InstructionMetadata _j = new InstructionMetadata (Instruction.j, 0x02, 0x00, InstructionFormat.J);
-        private static InstructionMetadata _jal = new InstructionMetadata (Instruction.jal, 0x03, 0x00, InstructionFormat.J);
-        private static InstructionMetadata _jr = new InstructionMetadata (Instruction.jr, 0x00, 0x08, InstructionFormat.R);
-        private static InstructionMetadata _lbu = new InstructionMetadata (Instruction.lbu, 0x24, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _lhu = new InstructionMetadata (Instruction.lhu, 0x25, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _lui = new InstructionMetadata (Instruction.lui, 0x0F, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _lw = new InstructionMetadata (Instruction.lw, 0x23, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _mfhi = new InstructionMetadata (Instruction.mfhi, 0x00, 0x10, InstructionFormat.R);
-        private static InstructionMetadata _mflo = new InstructionMetadata (Instruction.mflo, 0x00, 0x12, InstructionFormat.R);
-        private static InstructionMetadata _mfc0 = new InstructionMetadata (Instruction.mfc0, 0x10, 0x00, InstructionFormat.R);
-        private static InstructionMetadata _mult = new InstructionMetadata (Instruction.mult, 0x00, 0x18, InstructionFormat.R);
-        private static InstructionMetadata _multu = new InstructionMetadata (Instruction.multu, 0x00, 0x19, InstructionFormat.R);
-        private static InstructionMetadata _nor = new InstructionMetadata (Instruction.nor, 0x00, 0x27, InstructionFormat.R);
-        private static InstructionMetadata _xor = new InstructionMetadata (Instruction.xor, 0x00, 0x26, InstructionFormat.R);
-        private static InstructionMetadata _or = new InstructionMetadata (Instruction.or, 0x00, 0x25, InstructionFormat.R);
-        private static InstructionMetadata _ori = new InstructionMetadata (Instruction.ori, 0x0D, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _sb = new InstructionMetadata (Instruction.sb, 0x28, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _sh = new InstructionMetadata (Instruction.sh, 0x29, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _slt = new InstructionMetadata (Instruction.slt, 0x00, 0x2A, InstructionFormat.R);
-        private static InstructionMetadata _slti = new InstructionMetadata (Instruction.slti, 0x0A, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _sltiu = new InstructionMetadata (Instruction.sltiu, 0x0B, 0x00, InstructionFormat.I);
-        private static InstructionMetadata _sltu = new InstructionMetadata (Instruction.sltu, 0x00, 0x2B, InstructionFormat.R);
-        private static InstructionMetadata _sll = new InstructionMetadata (Instruction.sll, 0x00, 0x00, InstructionFormat.R);
-        private static InstructionMetadata _srl = new InstructionMetadata (Instruction.srl, 0x00, 0x02, InstructionFormat.R);
-        private static InstructionMetadata _sra = new InstructionMetadata (Instruction.sra, 0x00, 0x03, InstructionFormat.R);
-        private static InstructionMetadata _sub = new InstructionMetadata (Instruction.sub, 0x00, 0x22, InstructionFormat.R);
-        private static InstructionMetadata _subu = new InstructionMetadata (Instruction.subu, 0x00, 0x23, InstructionFormat.R);
-        private static InstructionMetadata _sw = new InstructionMetadata (Instruction.sw, 0x2B, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _add = new InstructionMetadata (InstructionMnemonic.add, 0x00, 0x20, InstructionFormat.R);
+        private static InstructionMetadata _addi = new InstructionMetadata (InstructionMnemonic.addi, 0x08, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _addiu = new InstructionMetadata (InstructionMnemonic.addiu, 0x09, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _addu = new InstructionMetadata (InstructionMnemonic.addu, 0x00, 0x21, InstructionFormat.R);
+        private static InstructionMetadata _and = new InstructionMetadata (InstructionMnemonic.and, 0x00, 0x24, InstructionFormat.R);
+        private static InstructionMetadata _andi = new InstructionMetadata (InstructionMnemonic.andi, 0x0C, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _beq = new InstructionMetadata (InstructionMnemonic.beq, 0x04, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _bne = new InstructionMetadata (InstructionMnemonic.bne, 0x05, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _div = new InstructionMetadata (InstructionMnemonic.div, 0x00, 0x1A, InstructionFormat.R);
+        private static InstructionMetadata _divu = new InstructionMetadata (InstructionMnemonic.divu, 0x00, 0x1B, InstructionFormat.R);
+        private static InstructionMetadata _j = new InstructionMetadata (InstructionMnemonic.j, 0x02, 0x00, InstructionFormat.J);
+        private static InstructionMetadata _jal = new InstructionMetadata (InstructionMnemonic.jal, 0x03, 0x00, InstructionFormat.J);
+        private static InstructionMetadata _jr = new InstructionMetadata (InstructionMnemonic.jr, 0x00, 0x08, InstructionFormat.R);
+        private static InstructionMetadata _lbu = new InstructionMetadata (InstructionMnemonic.lbu, 0x24, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _lhu = new InstructionMetadata (InstructionMnemonic.lhu, 0x25, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _lui = new InstructionMetadata (InstructionMnemonic.lui, 0x0F, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _lw = new InstructionMetadata (InstructionMnemonic.lw, 0x23, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _mfhi = new InstructionMetadata (InstructionMnemonic.mfhi, 0x00, 0x10, InstructionFormat.R);
+        private static InstructionMetadata _mflo = new InstructionMetadata (InstructionMnemonic.mflo, 0x00, 0x12, InstructionFormat.R);
+        private static InstructionMetadata _mfc0 = new InstructionMetadata (InstructionMnemonic.mfc0, 0x10, 0x00, InstructionFormat.R);
+        private static InstructionMetadata _mult = new InstructionMetadata (InstructionMnemonic.mult, 0x00, 0x18, InstructionFormat.R);
+        private static InstructionMetadata _multu = new InstructionMetadata (InstructionMnemonic.multu, 0x00, 0x19, InstructionFormat.R);
+        private static InstructionMetadata _nor = new InstructionMetadata (InstructionMnemonic.nor, 0x00, 0x27, InstructionFormat.R);
+        private static InstructionMetadata _xor = new InstructionMetadata (InstructionMnemonic.xor, 0x00, 0x26, InstructionFormat.R);
+        private static InstructionMetadata _or = new InstructionMetadata (InstructionMnemonic.or, 0x00, 0x25, InstructionFormat.R);
+        private static InstructionMetadata _ori = new InstructionMetadata (InstructionMnemonic.ori, 0x0D, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _sb = new InstructionMetadata (InstructionMnemonic.sb, 0x28, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _sh = new InstructionMetadata (InstructionMnemonic.sh, 0x29, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _slt = new InstructionMetadata (InstructionMnemonic.slt, 0x00, 0x2A, InstructionFormat.R);
+        private static InstructionMetadata _slti = new InstructionMetadata (InstructionMnemonic.slti, 0x0A, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _sltiu = new InstructionMetadata (InstructionMnemonic.sltiu, 0x0B, 0x00, InstructionFormat.I);
+        private static InstructionMetadata _sltu = new InstructionMetadata (InstructionMnemonic.sltu, 0x00, 0x2B, InstructionFormat.R);
+        private static InstructionMetadata _sll = new InstructionMetadata (InstructionMnemonic.sll, 0x00, 0x00, InstructionFormat.R);
+        private static InstructionMetadata _srl = new InstructionMetadata (InstructionMnemonic.srl, 0x00, 0x02, InstructionFormat.R);
+        private static InstructionMetadata _sra = new InstructionMetadata (InstructionMnemonic.sra, 0x00, 0x03, InstructionFormat.R);
+        private static InstructionMetadata _sub = new InstructionMetadata (InstructionMnemonic.sub, 0x00, 0x22, InstructionFormat.R);
+        private static InstructionMetadata _subu = new InstructionMetadata (InstructionMnemonic.subu, 0x00, 0x23, InstructionFormat.R);
+        private static InstructionMetadata _sw = new InstructionMetadata (InstructionMnemonic.sw, 0x2B, 0x00, InstructionFormat.I);
 
         static ISA ()
         {
@@ -173,6 +132,18 @@ namespace UMipss
         public static InstructionMetadata subu  { get { return _subu; } }
 
         public static InstructionMetadata sw  { get { return _sw; } }
+
+		internal static InstructionMetadata GetInstruction (InstructionMnemonic im) {
+			var propertyInfo = GetPropertyInfo (im); 
+			return (InstructionMetadata)propertyInfo.GetValue (null, null);
+		}
+
+		static PropertyInfo GetPropertyInfo (InstructionMnemonic im)
+		{
+			var propertyInfo = typeof(ISA).GetProperty (im.ToString (), 
+				BindingFlags.Public | BindingFlags.Static);
+			return propertyInfo;
+		}
 
     }
 	

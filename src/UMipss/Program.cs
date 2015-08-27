@@ -13,25 +13,16 @@ namespace UMipss
 	{
 		public static void Main (string[] args)
 		{
-            CP0.SetRegister (Cp0Reg.Cause, 10);
-            Console.WriteLine (CP0.GetRegister (Cp0Reg.Cause));
-            CP0.SetRegister (10, 20);
-            Console.WriteLine (CP0.GetRegister (10));
-			Console.WriteLine ("Hello World!");
-            CPU.SetRegister (CpuReg.t1, 10);
-            CPU.SetRegister (CpuReg.t2, 20);
-////			ALU.RInstructions.Add (
-////				new R { 
-////					OpCode = 0,
-////					Rd = 8,
-////					Rs = 9,
-////					Rt = 10,
-////					Funct = 31,
-////					//Operation = (a, b) => a + b
-////				});
-            /// 
-            ALU.Exec(new R(0, CpuReg.t1, CpuReg.t2, CpuReg.t0, 0, 0x20));
-            Console.WriteLine (CPU.GetRegister (CpuReg.t0));
+			CPU.Memory [40] = 10;
+			CPU.Memory [44] = 20;
+			Clock.Frequency = 1000;
+			Clock.Start ();
+			Pipeline.Start ();
+			ALU.Exec (Assembler.Emit (InstructionMnemonic.ori, CpuReg.zero, CpuReg.t3, 40));
+			ALU.Exec (Assembler.Emit (InstructionMnemonic.lw, CpuReg.t3, CpuReg.t1, 0));
+			ALU.Exec (Assembler.Emit (InstructionMnemonic.lw, CpuReg.t3, CpuReg.t2, 1));
+			ALU.Exec(Assembler.Emit (InstructionMnemonic.add, CpuReg.t1, CpuReg.t2, CpuReg.t0, 0));
+			Console.WriteLine (CPU.t0);
 			Console.ReadLine ();
 		}
 	}

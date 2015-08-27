@@ -5,35 +5,47 @@ using System.Text.RegularExpressions;
 namespace UMipss
 {
 
-    public struct InstructionMetadata
+    public enum InstructionMnemonic
     {
-        public InstructionMetadata (InstructionMnemonic instructionMnemonic, 
-                                    int opcode, int function, 
-									InstructionFormat format)
-        {
-            Instruction = instructionMnemonic;
-            Format = format;
-            OpCode = opcode;
-            Function = function;
-        }
-
-        public string Mnemonic { 
-            get { 
-                return Enum.GetName (Instruction.GetType (), Instruction);
-            }
-        }
-
-        public InstructionMnemonic Instruction { get; set; }
-
-        public InstructionFormat Format { get; set; }
-
-        public int OpCode { get; set; }
-
-        public int Function { get; set; }
+        add,
+        addi,
+        addiu,
+        addu,
+        and,
+        andi,
+        beq,
+        bne,
+        div,
+        divu,
+        j,
+        jal,
+        jr,
+        lbu,
+        lhu,
+        lui,
+        lw,
+        mfhi,
+        mflo,
+        mfc0,
+        mult,
+        multu,
+        nor,
+        xor,
+        or,
+        ori,
+        sb,
+        sh,
+        slt,
+        slti,
+        sltiu,
+        sltu,
+        sll,
+        srl,
+        sra,
+        sub,
+        subu,
+        sw
     }
-
-
-    
 	
 }
 
